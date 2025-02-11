@@ -1,6 +1,6 @@
 {
   "name": "logseq-plugin-import-recordings",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "main": "dist/index.html",
   "scripts": {
     "dev": "vite",
@@ -37,7 +37,8 @@
     "vite-plugin-logseq": "1.1.2"
   },
   "logseq": {
-    "id": "_pengx17-logseq-template-react",
-    "icon": "./logo.svg"
+    "id": "logseq-plugin-audio-path-to-embed",
+    "icon": "./logo.svg",
+    "title": "Audio Path to Embed Converter"
   }
 }

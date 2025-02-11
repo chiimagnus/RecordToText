@@ -1,25 +1,7 @@
-import React, { useRef } from "react";
-import { useAppVisible } from "./utils";
+import React from "react";
 
 function App() {
-  const innerRef = useRef<HTMLDivElement>(null);
-  const visible = useAppVisible();
-  if (visible) {
-    return (
-      <main
-        className="backdrop-filter backdrop-blur-md fixed inset-0 flex items-center justify-center"
-        onClick={(e) => {
-          if (!innerRef.current?.contains(e.target as any)) {
-            window.logseq.hideMainUI();
-          }
-        }}
-      >
-        <div ref={innerRef} className="text-size-2em">
-          Welcome to [[Logseq]] Plugins!
-        </div>
-      </main>
-    );
-  }
+  // 我们的插件不需要 UI 界面，只需要通过命令和快捷键触发功能
   return null;
 }
 

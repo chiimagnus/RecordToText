@@ -1,61 +1,63 @@
 import "@logseq/libs";
-
 import React from "react";
-import * as ReactDOM from "react-dom/client";
+import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 
-import { logseq as PL } from "../package.json";
-
-// @ts-expect-error
-const css = (t, ...args) => String.raw(t, ...args);
-
-const pluginId = PL.id;
+const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
 
 function main() {
-  console.info(`#${pluginId}: MAIN`);
-  const root = ReactDOM.createRoot(document.getElementById("app")!);
+  console.log("plugin loaded");
+  
+  // 注册斜杠命令
+  logseq.Editor.registerSlashCommand(
+    "Convert to Audio Embed",
+    async () => {
+      const block = await logseq.Editor.getCurrentBlock();
+      if (block) {
+        const content = block.content;
+        // 检查内容是否是音频文件路径
+        const audioExtensions = [".mp3", ".wav", ".m4a", ".ogg", ".aac"];
+        const isAudioPath = audioExtensions.some(ext => 
+          content.toLowerCase().endsWith(ext)
+        );
 
-  root.render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
+        if (isAudioPath) {
+          // 转换为 Logseq 的音频嵌入语法
+          const newContent = `![](${content})`;
+          await logseq.Editor.updateBlock(block.uuid, newContent);
+        }
+      }
+    }
   );
 
-  function createModel() {
-    return {
-      show() {
-        logseq.showMainUI();
-      },
-    };
-  }
-
-  logseq.provideModel(createModel());
-  logseq.setMainUIInlineStyle({
-    zIndex: 11,
-  });
-
-  const openIconName = "template-plugin-open";
-
-  logseq.provideStyle(css`
-    .${openIconName} {
-      opacity: 0.55;
-      font-size: 20px;
-      margin-top: 4px;
+  // 注册快捷键
+  logseq.App.registerCommandPalette({
+    key: "convert-audio-path",
+    label: "Convert Audio Path to Embed",
+    keybinding: {
+      mode: "global",
+      binding: "mod+shift+i"
     }
+  }, async () => {
+    const block = await logseq.Editor.getCurrentBlock();
+    if (block) {
+      const content = block.content;
+      const audioExtensions = [".mp3", ".wav", ".m4a", ".ogg", ".aac"];
+      const isAudioPath = audioExtensions.some(ext => 
+        content.toLowerCase().endsWith(ext)
+      );
 
-    .${openIconName}:hover {
-      opacity: 0.9;
+      if (isAudioPath) {
+        const newContent = `![](${content})`;
+        await logseq.Editor.updateBlock(block.uuid, newContent);
+      }
     }
-  `);
-
-  logseq.App.registerUIItem("toolbar", {
-    key: openIconName,
-    template: `
-    <a data-on-click="show">
-        <div class="${openIconName}">⚙️</div>
-    </a>    
-`,
   });
 }
 
