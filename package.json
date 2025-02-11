@@ -1,5 +1,5 @@
 {
-  "name": "logseq-plugin-import-recordings",
+  "name": "File Path to Embed Converter",
   "version": "0.1.0",
   "main": "dist/index.html",
   "scripts": {
@@ -37,8 +37,8 @@
     "vite-plugin-logseq": "1.1.2"
   },
   "logseq": {
-    "id": "logseq-plugin-audio-path-to-embed",
+    "id": "file-path-to-embed",
     "icon": "./logo.svg",
-    "title": "Audio Path to Embed Converter"
+    "title": "File Path to Embed Converter"
   }
 }

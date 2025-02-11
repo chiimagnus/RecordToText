@@ -16,30 +16,21 @@ function main() {
   
   // 注册斜杠命令
   logseq.Editor.registerSlashCommand(
-    "Convert to Audio Embed",
+    "Convert to Embed",
     async () => {
       const block = await logseq.Editor.getCurrentBlock();
       if (block) {
         const content = block.content;
-        // 检查内容是否是音频文件路径
-        const audioExtensions = [".mp3", ".wav", ".m4a", ".ogg", ".aac"];
-        const isAudioPath = audioExtensions.some(ext => 
-          content.toLowerCase().endsWith(ext)
-        );
-
-        if (isAudioPath) {
-          // 转换为 Logseq 的音频嵌入语法
-          const newContent = `![](${content})`;
-          await logseq.Editor.updateBlock(block.uuid, newContent);
-        }
+        const newContent = `![](${content})`;
+        await logseq.Editor.updateBlock(block.uuid, newContent);
       }
     }
   );
 
   // 注册快捷键
   logseq.App.registerCommandPalette({
-    key: "convert-audio-path",
-    label: "Convert Audio Path to Embed",
+    key: "convert-path",
+    label: "Convert Path to Embed",
     keybinding: {
       mode: "global",
       binding: "mod+shift+i"
@@ -48,15 +39,8 @@ function main() {
     const block = await logseq.Editor.getCurrentBlock();
     if (block) {
       const content = block.content;
-      const audioExtensions = [".mp3", ".wav", ".m4a", ".ogg", ".aac"];
-      const isAudioPath = audioExtensions.some(ext => 
-        content.toLowerCase().endsWith(ext)
-      );
-
-      if (isAudioPath) {
-        const newContent = `![](${content})`;
-        await logseq.Editor.updateBlock(block.uuid, newContent);
-      }
+      const newContent = `![](${content})`;
+      await logseq.Editor.updateBlock(block.uuid, newContent);
     }
   });
 }
