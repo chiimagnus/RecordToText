@@ -54,8 +54,13 @@ async function main() {
           })
         );
       } catch (error) {
-        console.error("Conversion error:", error);
-        (logseq.App as any).showMsg("转换失败，请检查控制台", "error");
+        console.error(error);
+        (logseq.App as any).showMsg(
+          (error as Error).message?.includes("文件路径") ?? false
+            ? "内容不是有效的文件路径" 
+            : "转换失败，请检查控制台",
+          "error"
+        );
       }
     });
 
@@ -66,9 +71,10 @@ async function main() {
   return registerCommands();
 }
 
-// 添加简单的路径校验函数
+// 增强路径检测逻辑
 function isValidPath(content: string) {
-  return content.includes("/") || content.includes("\\");
+  const pathPattern = /^(?:[a-zA-Z]:\\|\\|\\\\|\/|\.\/|~\/)|.*\.[a-zA-Z0-9]{2,4}(?:[?#].*)?$/;
+  return pathPattern.test(content) && (content.includes("/") || content.includes("\\"));
 }
 
 // 添加格式检测函数
@@ -78,8 +84,11 @@ function isAlreadyEmbed(content: string) {
   return embedPattern.test(content);
 }
 
-// 修改转换逻辑
+// 在转换函数中添加校验
 function convertToEmbed(content: string) {
+  if (!isValidPath(content)) {
+    throw new Error("内容不是有效的文件路径");
+  }
   return isAlreadyEmbed(content) ? content : `![](${content})`;
 }
 

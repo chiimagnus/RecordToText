@@ -24,3 +24,21 @@
 ![](/Users/username/recording.mp3)
 ```
 
+## 使用注意
+
+插件只会转换以下内容：
+- 包含文件扩展名（如 .mp3, .txt）
+- 符合文件路径格式（以 / 或 C:\ 开头，包含路径分隔符）
+
+示例有效内容：
+```
+/Users/name/file.mp3
+
+C:\Documents\file.txt
+
+./folder/image.jpg
+
+~/Downloads/document.pdf
+
+file_with_extension.md
+```

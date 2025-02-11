@@ -1,6 +1,6 @@
 {
   "name": "File Path to Embed Converter",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "main": "dist/index.html",
   "scripts": {
     "dev": "vite",
