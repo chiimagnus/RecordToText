@@ -23,8 +23,7 @@ async function main() {
           uuid: block?.uuid
         });
         if (block) {
-          const content = block.content;
-          const newContent = `![](${content})`;
+          const newContent = convertToEmbed(block.content);
           await logseq.Editor.updateBlock(block.uuid, newContent);
         }
       }
@@ -54,7 +53,8 @@ async function main() {
           return;
         }
         
-        await logseq.Editor.updateBlock(block.uuid, `![](${block.content})`);
+        const newContent = convertToEmbed(block.content);
+        await logseq.Editor.updateBlock(block.uuid, newContent);
       } catch (error) {
         console.error("Conversion error:", error);
         (logseq.App as any).showMsg("转换失败，请检查控制台", "error");
@@ -71,6 +71,18 @@ async function main() {
 // 添加简单的路径校验函数
 function isValidPath(content: string) {
   return content.includes("/") || content.includes("\\");
+}
+
+// 添加格式检测函数
+function isAlreadyEmbed(content: string) {
+  // 匹配标准的嵌入语法 ![](path)
+  const embedPattern = /^!\[\]\(.+\)$/;
+  return embedPattern.test(content);
+}
+
+// 修改转换逻辑
+function convertToEmbed(content: string) {
+  return isAlreadyEmbed(content) ? content : `![](${content})`;
 }
 
 logseq.ready(main).catch(console.error);
