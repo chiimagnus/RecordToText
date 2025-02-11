@@ -16,16 +16,18 @@ async function main() {
     logseq.Editor.registerSlashCommand(
       "Convert to Embed",
       async () => {
-        const block = await logseq.Editor.getCurrentBlock();
-        console.debug("Current block info:", {
-          content: block?.content,
-          pageId: block?.page?.id,
-          uuid: block?.uuid
-        });
-        if (block) {
-          const newContent = convertToEmbed(block.content);
-          await logseq.Editor.updateBlock(block.uuid, newContent);
+        const blocks = await logseq.Editor.getSelectedBlocks();
+        if (!blocks?.length) {
+          (logseq.App as any).showMsg("请先选择多个块", "warning");
+          return;
         }
+        
+        await Promise.all(
+          blocks.map(async (block) => {
+            const newContent = convertToEmbed(block.content);
+            await logseq.Editor.updateBlock(block.uuid, newContent);
+          })
+        );
       }
     );
 
@@ -39,22 +41,18 @@ async function main() {
       }
     }, async () => {
       try {
-        const block = await logseq.Editor.getCurrentBlock();
-        console.debug("Current block info:", {
-          content: block?.content,
-          pageId: block?.page?.id,
-          uuid: block?.uuid
-        });
-        if (!block) return;
-        
-        // 添加内容格式校验
-        if (!isValidPath(block.content)) {
-          (logseq.App as any).showMsg("内容不是有效的文件路径", "warning");
+        const blocks = await logseq.Editor.getSelectedBlocks();
+        if (!blocks?.length) {
+          (logseq.App as any).showMsg("请先选择多个块", "warning");
           return;
         }
         
-        const newContent = convertToEmbed(block.content);
-        await logseq.Editor.updateBlock(block.uuid, newContent);
+        await Promise.all(
+          blocks.map(async (block) => {
+            const newContent = convertToEmbed(block.content);
+            await logseq.Editor.updateBlock(block.uuid, newContent);
+          })
+        );
       } catch (error) {
         console.error("Conversion error:", error);
         (logseq.App as any).showMsg("转换失败，请检查控制台", "error");
