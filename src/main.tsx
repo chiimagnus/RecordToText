@@ -17,6 +17,11 @@ async function main() {
       "Convert to Embed",
       async () => {
         const block = await logseq.Editor.getCurrentBlock();
+        console.debug("Current block info:", {
+          content: block?.content,
+          pageId: block?.page?.id,
+          uuid: block?.uuid
+        });
         if (block) {
           const content = block.content;
           const newContent = `![](${content})`;
@@ -34,11 +39,25 @@ async function main() {
         binding: "mod+shift+i"
       }
     }, async () => {
-      const block = await logseq.Editor.getCurrentBlock();
-      if (block) {
-        const content = block.content;
-        const newContent = `![](${content})`;
-        await logseq.Editor.updateBlock(block.uuid, newContent);
+      try {
+        const block = await logseq.Editor.getCurrentBlock();
+        console.debug("Current block info:", {
+          content: block?.content,
+          pageId: block?.page?.id,
+          uuid: block?.uuid
+        });
+        if (!block) return;
+        
+        // 添加内容格式校验
+        if (!isValidPath(block.content)) {
+          (logseq.App as any).showMsg("内容不是有效的文件路径", "warning");
+          return;
+        }
+        
+        await logseq.Editor.updateBlock(block.uuid, `![](${block.content})`);
+      } catch (error) {
+        console.error("Conversion error:", error);
+        (logseq.App as any).showMsg("转换失败，请检查控制台", "error");
       }
     });
 
@@ -47,6 +66,11 @@ async function main() {
 
   // 返回清理函数
   return registerCommands();
+}
+
+// 添加简单的路径校验函数
+function isValidPath(content: string) {
+  return content.includes("/") || content.includes("\\");
 }
 
 logseq.ready(main).catch(console.error);
