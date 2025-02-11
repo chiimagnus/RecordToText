@@ -1,5 +1,5 @@
 {
-  "name": "logseq-plugin-template-react",
+  "name": "logseq-plugin-import-recordings",
   "version": "0.0.0",
   "main": "dist/index.html",
   "scripts": {
